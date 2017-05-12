@@ -1,6 +1,5 @@
 package org.gislab.hbase.core;
 
-import com.spatial4j.core.io.GeohashUtils;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotools.geometry.jts.GeometryBuilder;
@@ -173,7 +172,7 @@ public class GeoHash implements GeoCode{
     }
 
     public String encode(Coordinate coordinate,int precision){
-        String s = GeohashUtils.encodeLatLon(coordinate.x, coordinate.y, precision);
+        String s = encodeLatLon(coordinate.x, coordinate.y, precision);
         return s;
     }
 
