@@ -7,7 +7,6 @@ import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -23,7 +22,7 @@ import java.util.List;
 public class HBaseHelper implements Closeable{
 
     private Configuration configuration = null;
-    private Connection connection = null;
+    private Connection connection = null;           //重量级对象
     private Admin admin = null;
 
     protected HBaseHelper(Configuration conf) throws IOException {
@@ -137,10 +136,28 @@ public class HBaseHelper implements Closeable{
         return hTableDescriptors;
     }
 
+    /**
+     * 向表中插入某个qualify的值
+     * @param table
+     * @param row
+     * @param fam
+     * @param qual
+     * @param value
+     * @throws IOException
+     */
     public void put(String table,String row,String fam,String qual,String value) throws IOException {
         put(TableName.valueOf(table),row,fam,qual,value);
     }
 
+    /**
+     * 向表中插入某个qualify的值
+     * @param table
+     * @param row
+     * @param fam
+     * @param qual
+     * @param value
+     * @throws IOException
+     */
     public void put(TableName table,String row,String fam,String qual,String value) throws IOException {
         Table tb1 = connection.getTable(table);
         Put put=new Put(Bytes.toBytes(row));
@@ -205,6 +222,14 @@ public class HBaseHelper implements Closeable{
         }
     }
 
+    /**
+     * 创建一个Put对象
+     * @param row rowkey
+     * @param fam 列簇名称
+     * @param quals 列名称
+     * @param values 值
+     * @return
+     */
     public Put buildPut(String row,String fam,String[] quals,String[] values){
         if(quals.length!=values.length){
             return null;
@@ -263,6 +288,12 @@ public class HBaseHelper implements Closeable{
         return null;
     }
 
+    /**
+     * 根据表明与键值获取记录
+     * @param table
+     * @param rowkey
+     * @return
+     */
     public Result get(String table,String rowkey){
         try {
             Table tb1 = connection.getTable(TableName.valueOf(table));
